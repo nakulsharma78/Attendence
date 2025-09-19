@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, LayoutDashboard, ShieldCheck, UserPlus, Settings } from 'lucide-react';
+import { BarChart3, LayoutDashboard, ShieldCheck, UserPlus, Settings, LogIn } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Sidebar,
@@ -14,11 +14,17 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
+  SidebarFooter,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const noSidebarRoutes = ['/login', '/signup'];
+
+  if (noSidebarRoutes.includes(pathname)) {
+    return <>{children}</>;
+  }
 
   const menuItems = [
     {
@@ -45,7 +51,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <Sidebar>
+      <Sidebar variant="inset" collapsible="icon">
         <SidebarHeader>
           <Button variant="ghost" className="h-10 w-full justify-start px-2">
             <ShieldCheck className="h-6 w-6 text-primary" />
@@ -72,6 +78,20 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
             ))}
           </SidebarMenu>
         </SidebarContent>
+        <SidebarFooter>
+           <SidebarMenu>
+             <SidebarMenuItem>
+                <Link href="/login" passHref legacyBehavior>
+                  <SidebarMenuButton asChild tooltip="Logout">
+                    <a>
+                      <LogIn />
+                      <span>Logout</span>
+                    </a>
+                  </SidebarMenuButton>
+                </Link>
+             </SidebarMenuItem>
+           </SidebarMenu>
+        </SidebarFooter>
       </Sidebar>
       <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
