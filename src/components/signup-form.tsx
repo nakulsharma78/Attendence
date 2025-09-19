@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react';
 import { signupWithEmail } from '@/lib/auth-actions';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,7 +19,7 @@ import { ShieldCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export function SignupForm() {
-  const [state, formAction] = useFormState(signupWithEmail, undefined);
+  const [state, formAction] = useActionState(signupWithEmail, undefined);
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
