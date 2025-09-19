@@ -1,3 +1,4 @@
+"use client";
 import { PageHeader } from '@/components/page-header';
 import { DashboardClient } from '@/components/dashboard-client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';

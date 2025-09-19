@@ -1,3 +1,4 @@
+"use client";
 import { ReportsClient } from '@/components/reports-client';
 import { PageHeader } from '@/components/page-header';
 import { Card, CardContent } from '@/components/ui/card';

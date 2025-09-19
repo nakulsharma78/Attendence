@@ -1,3 +1,4 @@
+"use client";
 import { EnrollmentClient } from '@/components/enrollment-client';
 import { PageHeader } from '@/components/page-header';
 import { Card, CardContent } from '@/components/ui/card';
