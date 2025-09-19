@@ -4,6 +4,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { redirect } from 'next/navigation';
@@ -58,4 +60,18 @@ export async function logout() {
     console.error('Error signing out:', error);
   }
   redirect('/login');
+}
+
+export async function signInWithGoogle() {
+  const provider = new GoogleAuthProvider();
+  try {
+    await signInWithPopup(auth, provider);
+    redirect('/');
+  } catch (error) {
+    console.error('Error signing in with Google:', error);
+    return {
+      success: false,
+      message: 'Failed to sign in with Google. Please try again.',
+    };
+  }
 }
