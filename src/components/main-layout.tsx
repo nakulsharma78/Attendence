@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, LayoutDashboard, ShieldCheck, UserPlus } from 'lucide-react';
+import { BarChart3, LayoutDashboard, ShieldCheck, UserPlus, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Sidebar,
@@ -35,6 +35,11 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
       href: '/reports',
       label: 'Reports',
       icon: BarChart3,
+    },
+    {
+      href: '/settings',
+      label: 'Settings',
+      icon: Settings,
     },
   ];
 
