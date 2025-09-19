@@ -117,12 +117,10 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
         <SidebarFooter>
            <SidebarMenu>
              <SidebarMenuItem>
-                <form action={logout}>
-                  <SidebarMenuButton asChild tooltip="Logout" className="w-full">
-                    <button type="submit">
+                <form action={logout} className="w-full">
+                  <SidebarMenuButton type="submit" tooltip="Logout" className="w-full">
                       <LogOut />
                       <span>Logout</span>
-                    </button>
                   </SidebarMenuButton>
                 </form>
              </SidebarMenuItem>
