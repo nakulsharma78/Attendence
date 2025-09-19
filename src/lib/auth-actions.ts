@@ -61,17 +61,3 @@ export async function logout() {
   }
   redirect('/login');
 }
-
-export async function signInWithGoogle() {
-  const provider = new GoogleAuthProvider();
-  try {
-    await signInWithPopup(auth, provider);
-    redirect('/');
-  } catch (error) {
-    console.error('Error signing in with Google:', error);
-    return {
-      success: false,
-      message: 'Failed to sign in with Google. Please try again.',
-    };
-  }
-}

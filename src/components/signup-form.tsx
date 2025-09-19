@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { useActionState } from 'react';
-import { signupWithEmail, signInWithGoogle } from '@/lib/auth-actions';
+import { signupWithEmail } from '@/lib/auth-actions';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -19,6 +19,10 @@ import { ShieldCheck, Chrome } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFormStatus } from 'react-dom';
 import { Separator } from './ui/separator';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { useRouter } from 'next/navigation';
+
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -33,6 +37,7 @@ function SubmitButton() {
 export function SignupForm() {
   const [state, formAction] = useActionState(signupWithEmail, undefined);
   const { toast } = useToast();
+  const router = useRouter();
 
   React.useEffect(() => {
     if (state?.success === false) {
@@ -59,11 +64,15 @@ export function SignupForm() {
   };
   
   const handleGoogleSignIn = async () => {
-    const result = await signInWithGoogle();
-    if (result?.success === false) {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      router.push('/');
+    } catch (error) {
+      console.error('Error signing in with Google:', error);
       toast({
         title: 'Login Failed',
-        description: result.message,
+        description: 'Failed to sign in with Google. Please try again.',
         variant: 'destructive',
       });
     }
