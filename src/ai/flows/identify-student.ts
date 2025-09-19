@@ -44,20 +44,24 @@ const identifyStudentPrompt = ai.definePrompt({
   name: 'identifyStudentPrompt',
   input: {schema: IdentifyStudentInputSchema},
   output: {schema: IdentifyStudentOutputSchema},
-  prompt: `You are an AI-powered student identification system. Your task is to identify which student from the provided list appears in the input photo.
+  prompt: `You are an AI-powered student identification system. Your task is to accurately identify which student from the provided list appears in the input photo.
 
-  Compare the face in the input photo with the facial features in each of the student avatars provided in the 'students' array.
+  **Instructions:**
 
-  Input Photo:
-  {{media url=photoDataUri}}
+  1.  **Analyze the Input Photo:** Carefully examine the facial features of the person in the input photo.
+      Input Photo:
+      {{media url=photoDataUri}}
 
-  Enrolled Students:
-  {{#each students}}
-  - Student ID: {{this.id}}, Name: {{this.name}}
-    Avatar: {{media url=this.avatar}}
-  {{/each}}
-  
-  Based on your comparison, determine the ID of the student in the input photo. If you are confident in the match, provide the student's ID. If you are not confident, or if the person does not match any student, return null for the studentId.
+  2.  **Compare with Enrolled Students:** One by one, compare the face from the input photo against the avatar of each student in the following list. Pay close attention to facial structure, eyes, nose, and mouth.
+      Enrolled Students:
+      {{#each students}}
+      - Student ID: {{this.id}}, Name: {{this.name}}
+        Avatar: {{media url=this.avatar}}
+      {{/each}}
+
+  3.  **Make a Confident Match:**
+      - If you find a high-confidence match between the input photo and one of the student avatars, return the corresponding \`studentId\`.
+      - If the person in the photo does not match any of the students, or if you are not highly confident in any match, you **must** return \`null\` for the \`studentId\`. Do not guess. Accuracy is critical.
   `,
 });
 

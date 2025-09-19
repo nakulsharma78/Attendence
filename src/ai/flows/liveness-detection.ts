@@ -21,7 +21,7 @@ const LivenessDetectionInputSchema = z.object({
 export type LivenessDetectionInput = z.infer<typeof LivenessDetectionInputSchema>;
 
 const LivenessDetectionOutputSchema = z.object({
-  isLive: z.boolean().describe('Whether the face is a live person.'),
+  isLive: z.boolean().describe('Whether the face is a live person and not a static image or video.'),
   blinkDetected: z.boolean().describe('Whether a blink was detected.'),
   smileDetected: z.boolean().describe('Whether a smile was detected.'),
 });
@@ -35,12 +35,21 @@ const livenessDetectionPrompt = ai.definePrompt({
   name: 'livenessDetectionPrompt',
   input: {schema: LivenessDetectionInputSchema},
   output: {schema: LivenessDetectionOutputSchema},
-  prompt: `You are an AI-powered liveness detection system.  You will determine if the input photo contains a live person, and whether you can detect a blink or smile.
+  prompt: `You are an advanced AI-powered liveness detection system. Your task is to determine if the input photo contains a real, live person in that moment, and not a static photo, screen, or other spoofing attempt.
 
-  Analyze the following face to detect liveness.  Consider the possibility of spoofing attempts, such as using a photo or video of a person.
+  **Instructions:**
 
-  Photo: {{media url=photoDataUri}}
-  `, 
+  1.  **Analyze the Image for Liveness Cues:** Examine the following image for subtle signs of life. Look for natural imperfections, lighting and shadows that suggest a 3D presence, eye reflections, and micro-expressions.
+      Photo: {{media url=photoDataUri}}
+
+  2.  **Detect Specific Actions:**
+      - Analyze the eyes. Is there evidence of a blink (e.g., partially closed eyelids, motion blur)? Set \`blinkDetected\` accordingly.
+      - Analyze the mouth and facial muscles. Is there evidence of a smile? Set \`smileDetected\` accordingly.
+
+  3.  **Determine Overall Liveness:** Based on your analysis, make a final judgment.
+      - If you detect signs of a real person (e.g., natural expression, 3D depth, detected actions), set \`isLive\` to \`true\`.
+      - If the image appears to be a photo of a photo, a face on a screen, or otherwise looks static or fake, set \`isLive\` to \`false\`.
+  `,
 });
 
 const livenessDetectionFlow = ai.defineFlow(
