@@ -44,19 +44,18 @@ export function SignupForm() {
   }, [state, toast]);
   
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const password = formData.get('password') as string;
     const confirmPassword = formData.get('confirmPassword') as string;
     
     if (password !== confirmPassword) {
+      event.preventDefault(); // Prevent form submission
       toast({
         title: "Passwords don't match",
         variant: 'destructive',
       });
-      return;
     }
-    formAction(formData);
+    // If passwords match, the form will submit as normal to the `formAction`
   };
 
 
@@ -69,7 +68,7 @@ export function SignupForm() {
         <CardTitle>Create an Account</CardTitle>
         <CardDescription>Enter your details to get started</CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} action={formAction}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
