@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { BarChart3, LayoutDashboard, ShieldCheck, UserPlus, Settings, LogIn } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { BarChart3, LayoutDashboard, ShieldCheck, UserPlus, Settings, LogOut, LogIn } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Sidebar,
@@ -17,12 +17,28 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
+import { useSession } from '@/components/session-provider';
+import { logout } from '@/lib/auth-actions';
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, loading } = useSession();
+  
   const noSidebarRoutes = ['/login', '/signup'];
+  const isPublicPage = noSidebarRoutes.includes(pathname);
 
-  if (noSidebarRoutes.includes(pathname)) {
+  React.useEffect(() => {
+    if (!loading && !user && !isPublicPage) {
+      router.push('/login');
+    }
+  }, [user, loading, isPublicPage, router, pathname]);
+
+  if (loading && !isPublicPage) {
+    return <div className="flex h-screen w-full items-center justify-center">Loading...</div>;
+  }
+
+  if (isPublicPage) {
     return <>{children}</>;
   }
 
@@ -81,14 +97,14 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
         <SidebarFooter>
            <SidebarMenu>
              <SidebarMenuItem>
-                <Link href="/login" passHref legacyBehavior>
-                  <SidebarMenuButton asChild tooltip="Logout">
-                    <a>
-                      <LogIn />
+                <form action={logout}>
+                  <SidebarMenuButton asChild tooltip="Logout" className="w-full">
+                    <button type="submit">
+                      <LogOut />
                       <span>Logout</span>
-                    </a>
+                    </button>
                   </SidebarMenuButton>
-                </Link>
+                </form>
              </SidebarMenuItem>
            </SidebarMenu>
         </SidebarFooter>

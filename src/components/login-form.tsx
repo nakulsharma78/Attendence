@@ -2,9 +2,8 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { useFormState } from 'react-dom';
+import { loginWithEmail } from '@/lib/auth-actions';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -15,37 +14,31 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Label } from '@/components/ui/label';
 import { ShieldCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-const loginSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(1, 'Password is required'),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
-
 export function LoginForm() {
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [state, formAction] = useFormState(loginWithEmail, undefined);
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
-  });
 
-  const onSubmit = (data: LoginFormValues) => {
+  React.useEffect(() => {
+    if (state?.success === false) {
+      toast({
+        title: 'Login Failed',
+        description: state.message,
+        variant: 'destructive',
+      });
+      setIsSubmitting(false);
+    }
+  }, [state, toast]);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true);
-    console.log('Login data:', data);
-    toast({
-      title: 'Login Submitted',
-      description: 'In a real app, this would log the user in.',
-    });
-    // In a real app, you would redirect here after successful login
-    // window.location.href = '/';
-    setTimeout(() => setIsSubmitting(false), 1000);
-  };
+    formAction(new FormData(event.currentTarget));
+  }
 
   return (
     <Card className="w-full max-w-sm">
@@ -56,49 +49,29 @@ export function LoginForm() {
         <CardTitle>Welcome Back</CardTitle>
         <CardDescription>Enter your credentials to access your account</CardDescription>
       </CardHeader>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardContent className="space-y-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="name@example.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-          <CardFooter className="flex-col gap-4">
-            <Button type="submit" disabled={isSubmitting} className="w-full">
-              {isSubmitting ? 'Signing In...' : 'Sign In'}
-            </Button>
-            <p className="text-sm text-muted-foreground">
-              Don&apos;t have an account?{' '}
-              <Link href="/signup" className="text-primary hover:underline">
-                Sign up
-              </Link>
-            </p>
-          </CardFooter>
-        </form>
-      </Form>
+      <form onSubmit={handleSubmit}>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" name="email" type="email" placeholder="name@example.com" required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input id="password" name="password" type="password" required />
+          </div>
+        </CardContent>
+        <CardFooter className="flex-col gap-4">
+          <Button type="submit" disabled={isSubmitting} className="w-full">
+            {isSubmitting ? 'Signing In...' : 'Sign In'}
+          </Button>
+          <p className="text-sm text-muted-foreground">
+            Don&apos;t have an account?{' '}
+            <Link href="/signup" className="text-primary hover:underline">
+              Sign up
+            </Link>
+          </p>
+        </CardFooter>
+      </form>
     </Card>
   );
 }
