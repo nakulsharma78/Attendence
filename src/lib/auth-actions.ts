@@ -33,6 +33,8 @@ export async function signupWithEmail(prevState: ActionState, formData: FormData
     };
   }
 
+  // A successful signup automatically signs the user in.
+  // We need to redirect to get the session state to update correctly.
   redirect(redirectUrl || '/');
 }
 
@@ -50,7 +52,7 @@ export async function loginWithEmail(prevState: ActionState, formData: FormData)
     };
   }
   
-  redirect(redirectUrl || '/');
+  redirect(redirectUrl || '/dashboard');
 }
 
 export async function logout() {

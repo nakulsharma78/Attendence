@@ -19,7 +19,7 @@ import { ShieldCheck, Chrome } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFormStatus } from 'react-dom';
 import { Separator } from './ui/separator';
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider, OAuthProvider } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -32,6 +32,13 @@ function SubmitButton() {
     </Button>
   );
 }
+
+const YahooIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12c6.628 0 12-5.373 12-12S18.628 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
+    <path d="M10.13 8.36H8.25l-.23 1.25h2.11zm3.74 0h-1.88l-.23 1.25h2.11zM17.5 12c0 .28-.03.55-.08.82L15.3 18h-2.1l-1.3-3.6-1.3 3.6h-2.1L6.58 12.82c-.05-.27-.08-.54-.08-.82 0-2.21 1.79-4 4-4s4 1.79 4 4zm-7.6-2.39L9.13 14.5h.05l.7-3.89h1.24l.7 3.89h.05l.72-4.89h1.5l-1.32 6.64h-1.4l-.74-3.84-.74 3.84h-1.4L6.4 9.61h1.5z"/>
+  </svg>
+);
 
 
 export function SignupForm() {
@@ -83,6 +90,21 @@ export function SignupForm() {
     }
   };
 
+  const handleYahooSignIn = async () => {
+    const provider = new OAuthProvider('yahoo.com');
+    try {
+      await signInWithPopup(auth, provider);
+       router.push(redirectUrl || '/dashboard');
+    } catch (error) {
+      console.error('Error signing in with Yahoo:', error);
+      toast({
+        title: 'Login Failed',
+        description: 'Failed to sign in with Yahoo. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  }
+
 
   return (
     <Card className="w-full max-w-sm">
@@ -117,10 +139,16 @@ export function SignupForm() {
                 <Separator className="absolute left-0 top-1/2 -translate-y-1/2 w-full" />
                 <span className="bg-background px-2 relative z-10 text-xs text-muted-foreground mx-auto w-fit flex">OR CONTINUE WITH</span>
             </div>
-            <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} type="button">
-                <Chrome className="mr-2 h-4 w-4" />
-                Google
-            </Button>
+            <div className="w-full grid grid-cols-2 gap-2">
+              <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} type="button">
+                  <Chrome className="mr-2 h-4 w-4" />
+                  Google
+              </Button>
+              <Button variant="outline" className="w-full" onClick={handleYahooSignIn} type="button">
+                  <YahooIcon />
+                  Yahoo
+              </Button>
+            </div>
           <p className="text-sm text-muted-foreground">
             Already have an account?{' '}
             <Link href="/login" className="text-primary hover:underline">
