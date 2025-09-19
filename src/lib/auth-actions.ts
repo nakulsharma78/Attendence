@@ -32,7 +32,7 @@ export async function signupWithEmail(prevState: ActionState, formData: FormData
     };
   }
 
-  redirect('/dashboard');
+  redirect('/');
 }
 
 export async function loginWithEmail(prevState: ActionState, formData: FormData) {
@@ -48,7 +48,7 @@ export async function loginWithEmail(prevState: ActionState, formData: FormData)
     };
   }
   
-  redirect('/dashboard');
+  redirect('/');
 }
 
 export async function logout() {

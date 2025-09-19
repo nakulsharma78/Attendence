@@ -18,28 +18,46 @@ import {
 import { Button } from '@/components/ui/button';
 import { useSession } from '@/components/session-provider';
 import { logout } from '@/lib/auth-actions';
-import { LandingHeader } from '@/components/landing/landing-header';
+import Loading from '@/app/loading';
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, loading } = useSession();
+  const { user, isSubscribed, loading } = useSession();
   
   const publicPages = ['/', '/login', '/signup'];
-  const isPublicPage = publicPages.includes(pathname);
+  const isPublicPage = publicPages.includes(pathname) || pathname.startsWith('/#');
 
   React.useEffect(() => {
-    if (!loading && !user && !isPublicPage) {
+    if (loading) return;
+
+    // If user is not logged in and not on a public page, redirect to login
+    if (!user && !isPublicPage) {
       router.push('/login');
+      return;
     }
-  }, [user, loading, isPublicPage, router, pathname]);
+
+    // If user is logged in but NOT subscribed, and trying to access a non-public page,
+    // redirect them to the pricing page.
+    if (user && !isSubscribed && !isPublicPage) {
+      router.push('/#pricing');
+      return;
+    }
+
+  }, [user, isSubscribed, loading, isPublicPage, router, pathname]);
 
   if (loading) {
-    return <div className="flex h-screen w-full items-center justify-center">Loading...</div>;
+    return <Loading />;
   }
   
   if (isPublicPage) {
      return <>{children}</>;
+  }
+  
+  // If we are here, user is logged in AND subscribed
+  if (!user) {
+    // This can happen briefly during redirects, show a loading state
+    return <Loading />;
   }
 
   const menuItems = [
