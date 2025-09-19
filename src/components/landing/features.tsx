@@ -30,7 +30,7 @@ export function Features() {
   return (
     <section id="features" className="py-20">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
           <h2 className="text-3xl font-bold tracking-tight">Why GuardianAI?</h2>
           <p className="text-muted-foreground mt-2">
             Discover the features that make our platform the best choice for your institution.
@@ -38,7 +38,7 @@ export function Features() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
-            <Card key={index} className="text-center">
+            <Card key={index} className="text-center animate-fade-in-up" style={{ animationDelay: `${0.3 + index * 0.1}s` }}>
               <CardHeader>
                 <div className="flex justify-center mb-4">{feature.icon}</div>
                 <CardTitle>{feature.title}</CardTitle>

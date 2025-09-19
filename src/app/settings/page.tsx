@@ -13,11 +13,14 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle>Admin Controls</CardTitle>
             <CardDescription>
-              These settings are for administrative purposes and will eventually be restricted to admin users.
+              Manage institution-wide settings, user roles, and subscription details.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p>Admin features like manual data entry, user management, and system configuration will be available here.</p>
+            <p className="text-muted-foreground">
+              This section is for administrative purposes. Features like manual data correction,
+              user management, and system configuration will be available here for authorized admins.
+            </p>
           </CardContent>
         </Card>
       </div>
