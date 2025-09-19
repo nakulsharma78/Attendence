@@ -17,12 +17,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ShieldCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useFormStatus } from 'react-dom';
+
+function SubmitButton() {
+    const { pending } = useFormStatus();
+    return (
+        <Button type="submit" disabled={pending} className="w-full">
+            {pending ? 'Signing In...' : 'Sign In'}
+        </Button>
+    );
+}
 
 export function LoginForm() {
   const [state, formAction] = useActionState(loginWithEmail, undefined);
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-
 
   React.useEffect(() => {
     if (state?.success === false) {
@@ -31,14 +39,8 @@ export function LoginForm() {
         description: state.message,
         variant: 'destructive',
       });
-      setIsSubmitting(false);
     }
   }, [state, toast]);
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    setIsSubmitting(true);
-    formAction(new FormData(event.currentTarget));
-  }
 
   return (
     <Card className="w-full max-w-sm">
@@ -49,7 +51,7 @@ export function LoginForm() {
         <CardTitle>Welcome Back</CardTitle>
         <CardDescription>Enter your credentials to access your account</CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
+      <form action={formAction}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -61,9 +63,7 @@ export function LoginForm() {
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-4">
-          <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? 'Signing In...' : 'Sign In'}
-          </Button>
+          <SubmitButton />
           <p className="text-sm text-muted-foreground">
             Don&apos;t have an account?{' '}
             <Link href="/signup" className="text-primary hover:underline">

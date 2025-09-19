@@ -17,11 +17,21 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ShieldCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useFormStatus } from 'react-dom';
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" disabled={pending} className="w-full">
+      {pending ? 'Creating Account...' : 'Create Account'}
+    </Button>
+  );
+}
+
 
 export function SignupForm() {
   const [state, formAction] = useActionState(signupWithEmail, undefined);
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   React.useEffect(() => {
     if (state?.success === false) {
@@ -30,7 +40,6 @@ export function SignupForm() {
         description: state.message,
         variant: 'destructive',
       });
-      setIsSubmitting(false);
     }
   }, [state, toast]);
   
@@ -47,8 +56,6 @@ export function SignupForm() {
       });
       return;
     }
-
-    setIsSubmitting(true);
     formAction(formData);
   };
 
@@ -78,9 +85,7 @@ export function SignupForm() {
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-4">
-          <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? 'Creating Account...' : 'Create Account'}
-          </Button>
+          <SubmitButton />
           <p className="text-sm text-muted-foreground">
             Already have an account?{' '}
             <Link href="/login" className="text-primary hover:underline">
