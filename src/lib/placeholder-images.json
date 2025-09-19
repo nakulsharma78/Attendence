@@ -1,3 +1,94 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "1",
+      "description": "A placeholder image for a student.",
+      "imageUrl": "https://picsum.photos/seed/1/400/400",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "2",
+      "description": "A placeholder image for a student.",
+      "imageUrl": "https://picsum.photos/seed/2/400/400",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "3",
+      "description": "A placeholder image for a student.",
+      "imageUrl": "https://picsum.photos/seed/3/400/400",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "4",
+      "description": "A placeholder image for a student.",
+      "imageUrl": "https://picsum.photos/seed/4/400/400",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "5",
+      "description": "A placeholder image for a student.",
+      "imageUrl": "https://picsum.photos/seed/5/400/400",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "6",
+      "description": "A placeholder image for a student.",
+      "imageUrl": "https://picsum.photos/seed/6/400/400",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "7",
+      "description": "A placeholder image for a student.",
+      "imageUrl": "https://picsum.photos/seed/7/400/400",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "8",
+      "description": "A placeholder image for a student.",
+      "imageUrl": "https://picsum.photos/seed/8/400/400",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "9",
+      "description": "A placeholder image for a student.",
+      "imageUrl": "https://picsum.photos/seed/9/400/400",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "10",
+      "description": "A placeholder image for a student.",
+      "imageUrl": "https://picsum.photos/seed/10/400/400",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "11",
+      "description": "A placeholder image for a student.",
+      "imageUrl": "https://picsum.photos/seed/11/400/400",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "12",
+      "description": "A placeholder image for a student.",
+      "imageUrl": "https://picsum.photos/seed/12/400/400",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "13",
+      "description": "A placeholder image for a student.",
+      "imageUrl": "https://picsum.photos/seed/13/400/400",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "14",
+      "description": "A placeholder image for a student.",
+      "imageUrl": "https://picsum.photos/seed/14/400/400",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "15",
+      "description": "A placeholder image for a student.",
+      "imageUrl": "https://picsum.photos/seed/15/400/400",
+      "imageHint": "student portrait"
+    }
+  ]
 }
