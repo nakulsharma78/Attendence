@@ -1,5 +1,6 @@
 import { useSidebar } from '@/hooks/use-sidebar';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type PageHeaderProps = {
   title: string;
@@ -8,12 +9,12 @@ type PageHeaderProps = {
 
 export function PageHeader({ title, description }: PageHeaderProps) {
   const sidebar = useSidebar();
-  const isMobile = sidebar?.isMobile ?? false;
+  const isMobile = useIsMobile();
   
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/30 px-4 backdrop-blur-sm md:px-6">
       <div className="flex items-center gap-2">
-        {isMobile && sidebar && <SidebarTrigger className="md:hidden" />}
+        {isMobile && sidebar && <SidebarTrigger />}
         <div className="flex flex-col">
           <h1 className="text-xl font-bold tracking-tight">{title}</h1>
           {description && (
