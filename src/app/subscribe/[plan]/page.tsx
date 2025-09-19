@@ -10,8 +10,8 @@ import Loading from '@/app/loading';
 import { useEffect } from 'react';
 
 const planDetails: Record<string, { name: string; price: string }> = {
-  basic: { name: 'Basic Plan', price: '$49/month' },
-  professional: { name: 'Professional Plan', price: '$199/month' },
+  basic: { name: 'Basic Plan', price: '₹2,999/month' },
+  professional: { name: 'Professional Plan', price: '₹9,999/month' },
 };
 
 export default function SubscribePage() {

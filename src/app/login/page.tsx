@@ -6,14 +6,18 @@ import { useEffect } from 'react';
 import Loading from '@/app/loading';
 
 export default function LoginPage() {
-  const { user, loading } = useSession();
+  const { user, isSubscribed, loading } = useSession();
   const router = useRouter();
 
   useEffect(() => {
     if (!loading && user) {
-      router.push('/');
+      if (isSubscribed) {
+        router.push('/dashboard');
+      } else {
+        router.push('/#pricing');
+      }
     }
-  }, [user, loading, router]);
+  }, [user, isSubscribed, loading, router]);
 
   if (loading || user) {
     return <Loading />;

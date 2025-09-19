@@ -9,7 +9,7 @@ import { ContactSalesDialog } from '@/components/landing/contact-sales-dialog';
 const pricingTiers = [
   {
     name: 'Basic',
-    price: '$49',
+    price: '₹2,999',
     period: '/month',
     description: 'For small departments or single classes.',
     features: [
@@ -23,7 +23,7 @@ const pricingTiers = [
   },
   {
     name: 'Professional',
-    price: '$199',
+    price: '₹9,999',
     period: '/month',
     description: 'Ideal for schools and medium-sized institutions.',
     features: [
