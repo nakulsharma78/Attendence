@@ -8,15 +8,18 @@ import { ArrowLeft, CreditCard } from 'lucide-react';
 import { useSession } from '@/components/session-provider';
 import Loading from '@/app/loading';
 import { useEffect } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 const planDetails: Record<string, { name: string; price: string }> = {
-  basic: { name: 'Basic Plan', price: '₹2,999/month' },
-  professional: { name: 'Professional Plan', price: '₹9,999/month' },
+  monthly: { name: 'Monthly Plan', price: '₹999/month' },
+  'half-yearly': { name: 'Half-Yearly Plan', price: '₹4,999/6 months' },
+  yearly: { name: 'Yearly Plan', price: '₹8,999/year' },
 };
 
 export default function SubscribePage() {
   const params = useParams();
   const router = useRouter();
+  const { toast } = useToast();
   const { user, loading } = useSession();
   const planId = Array.isArray(params.plan) ? params.plan[0] : params.plan;
   const plan = planDetails[planId] || { name: 'Selected Plan', price: '' };
@@ -34,9 +37,22 @@ export default function SubscribePage() {
 
   const handlePayment = () => {
     // In a real application, this would redirect to a Stripe Checkout session.
-    // For now, it will just show an alert.
-    alert(`Redirecting to payment provider for ${plan.name}...`);
-    // Example: router.push(stripeCheckoutUrl);
+    // For now, it will just show a toast and simulate success.
+    toast({
+      title: 'Payment Simulation',
+      description: `Redirecting to payment provider for ${plan.name}... This is a demo.`,
+    });
+    
+    // Simulate a successful payment and redirect to the dashboard.
+    setTimeout(() => {
+       toast({
+        title: 'Payment Successful!',
+        description: `You are now subscribed to the ${plan.name}.`,
+      });
+      // Here you would typically update the user's subscription status in your database.
+      // For the demo, we just redirect. The session provider will pick up the 'subscribed' state on reload.
+      router.push('/dashboard');
+    }, 2000);
   };
 
   return (

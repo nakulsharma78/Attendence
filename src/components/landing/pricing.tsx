@@ -8,34 +8,45 @@ import { ContactSalesDialog } from '@/components/landing/contact-sales-dialog';
 
 const pricingTiers = [
   {
-    name: 'Basic',
-    price: '₹2,999',
+    name: 'Monthly',
+    price: '₹999',
     period: '/month',
-    description: 'For small departments or single classes.',
+    description: 'Perfect for getting started.',
     features: [
-      'Up to 50 Students',
+      'Unlimited Students',
       'AI Facial Recognition',
-      'Basic Attendance Reports',
+      'Liveness Detection',
+      'Real-Time Reporting',
       'Email Support',
     ],
-    cta: 'Choose Basic',
-    planId: 'basic',
+    cta: 'Choose Monthly',
+    planId: 'monthly',
   },
   {
-    name: 'Professional',
-    price: '₹9,999',
-    period: '/month',
-    description: 'Ideal for schools and medium-sized institutions.',
+    name: 'Half-Yearly',
+    price: '₹4,999',
+    period: '/6 months',
+    description: 'Save with a semi-annual commitment.',
     features: [
-      'Up to 500 Students',
-      'All Basic Features',
-      'Advanced Reporting & Analytics',
-      'Liveness Detection',
+      'All Monthly Features',
+      'Includes 15% Discount',
       'Priority Support',
     ],
-    cta: 'Choose Professional',
-    popular: true,
-    planId: 'professional',
+    cta: 'Choose Half-Yearly',
+    planId: 'half-yearly',
+  },
+  {
+    name: 'Yearly',
+    price: '₹8,999',
+    period: '/year',
+    description: 'Best value for long-term use.',
+    features: [
+      'All Monthly Features',
+      'Includes 25% Discount',
+      'Priority Support',
+    ],
+    cta: 'Choose Yearly',
+    planId: 'yearly',
   },
   {
     name: 'Enterprise',
@@ -43,8 +54,7 @@ const pricingTiers = [
     period: '',
     description: 'Tailored for large universities and districts.',
     features: [
-      'Unlimited Students',
-      'All Professional Features',
+      'Unlimited Students & Classes',
       'API Access & Integrations',
       'Dedicated Account Manager',
       'On-Premise Deployment Option',
@@ -64,11 +74,10 @@ export function Pricing() {
             Choose the plan that's right for your institution.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
           {pricingTiers.map((tier) => (
-            <Card key={tier.name} className={tier.popular ? 'border-primary' : ''}>
+            <Card key={tier.name} className={tier.name === 'Enterprise' ? 'md:col-span-2 lg:col-span-1' : ''}>
               <CardHeader>
-                {tier.popular && <div className="text-primary font-semibold mb-2">Most Popular</div>}
                 <CardTitle>{tier.name}</CardTitle>
                 <div className="flex items-baseline">
                   <span className="text-4xl font-bold">{tier.price}</span>
@@ -90,7 +99,7 @@ export function Pricing() {
                  {tier.planId === 'enterprise' ? (
                   <ContactSalesDialog />
                 ) : (
-                  <Button asChild className="w-full" variant={tier.popular ? 'default' : 'outline'}>
+                  <Button asChild className="w-full">
                     <Link href={`/subscribe/${tier.planId}`}>{tier.cta}</Link>
                   </Button>
                 )}

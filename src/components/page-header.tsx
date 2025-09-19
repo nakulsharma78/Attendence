@@ -1,4 +1,4 @@
-import { useSidebar } from '@/hooks/use-sidebar';
+import { useSidebar } from '@/components/ui/sidebar';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
 type PageHeaderProps = {
@@ -7,11 +7,19 @@ type PageHeaderProps = {
 };
 
 export function PageHeader({ title, description }: PageHeaderProps) {
-  const { isInsideSidebar } = useSidebar();
+  let isMobile = false;
+  try {
+    // This will throw an error if the provider is not found,
+    // which is expected on public pages.
+    ({ isMobile } = useSidebar());
+  } catch (e) {
+    // We are on a page without a sidebar, so we don't need to show the trigger.
+  }
+  
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/30 px-4 backdrop-blur-sm md:px-6">
       <div className="flex items-center gap-2">
-        {isInsideSidebar && <SidebarTrigger className="md:hidden" />}
+        {isMobile && <SidebarTrigger className="md:hidden" />}
         <div className="flex flex-col">
           <h1 className="text-xl font-bold tracking-tight">{title}</h1>
           {description && (
