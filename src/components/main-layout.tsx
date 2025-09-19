@@ -26,7 +26,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
   const { user, isSubscribed, loading } = useSession();
   
   const publicPages = ['/', '/login', '/signup'];
-  const isPublicPage = publicPages.includes(pathname) || pathname.startsWith('/#');
+  const isPublicPage = publicPages.includes(pathname) || pathname.startsWith('/#') || pathname.startsWith('/subscribe');
 
   React.useEffect(() => {
     if (loading) return;
