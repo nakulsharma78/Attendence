@@ -76,11 +76,11 @@ export function SignupForm() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" name="password" type="password" required minLength={8}/>
+            <Input id="password" name="password" type="password" required minLength={6}/>
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">Confirm Password</Label>
-            <Input id="confirmPassword" name="confirmPassword" type="password" required minLength={8}/>
+            <Input id="confirmPassword" name="confirmPassword" type="password" required minLength={6}/>
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-4">
