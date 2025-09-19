@@ -21,7 +21,7 @@ import { useFormStatus } from 'react-dom';
 import { Separator } from './ui/separator';
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 function SubmitButton() {
     const { pending } = useFormStatus();
@@ -36,6 +36,9 @@ export function LoginForm() {
   const [state, formAction] = useActionState(loginWithEmail, undefined);
   const { toast } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get('redirect');
+
 
   React.useEffect(() => {
     if (state?.success === false) {
@@ -51,7 +54,7 @@ export function LoginForm() {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      router.push('/dashboard');
+      router.push(redirectUrl || '/dashboard');
     } catch (error) {
       console.error('Error signing in with Google:', error);
       toast({
@@ -75,6 +78,7 @@ export function LoginForm() {
       </CardHeader>
       <form action={formAction}>
         <CardContent className="space-y-4">
+           <input type="hidden" name="redirectUrl" value={redirectUrl || ''} />
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" name="email" type="email" placeholder="name@example.com" required />

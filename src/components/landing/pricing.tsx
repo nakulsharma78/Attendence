@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check } from 'lucide-react';
+import { ContactSalesDialog } from '@/components/landing/contact-sales-dialog';
 
 const pricingTiers = [
   {
@@ -18,6 +19,7 @@ const pricingTiers = [
       'Email Support',
     ],
     cta: 'Choose Basic',
+    planId: 'basic',
   },
   {
     name: 'Professional',
@@ -33,6 +35,7 @@ const pricingTiers = [
     ],
     cta: 'Choose Professional',
     popular: true,
+    planId: 'professional',
   },
   {
     name: 'Enterprise',
@@ -47,6 +50,7 @@ const pricingTiers = [
       'On-Premise Deployment Option',
     ],
     cta: 'Contact Sales',
+    planId: 'enterprise',
   },
 ];
 
@@ -83,9 +87,13 @@ export function Pricing() {
                 </ul>
               </CardContent>
               <CardFooter>
-                <Button asChild className="w-full" variant={tier.popular ? 'default' : 'outline'}>
-                  <Link href="/signup">{tier.cta}</Link>
-                </Button>
+                 {tier.planId === 'enterprise' ? (
+                  <ContactSalesDialog />
+                ) : (
+                  <Button asChild className="w-full" variant={tier.popular ? 'default' : 'outline'}>
+                    <Link href={`/subscribe/${tier.planId}`}>{tier.cta}</Link>
+                  </Button>
+                )}
               </CardFooter>
             </Card>
           ))}

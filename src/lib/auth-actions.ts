@@ -16,6 +16,7 @@ type ActionState = {
 export async function signupWithEmail(prevState: ActionState, formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
+  const redirectUrl = formData.get('redirectUrl') as string | null;
 
   try {
     await createUserWithEmailAndPassword(auth, email, password);
@@ -32,12 +33,13 @@ export async function signupWithEmail(prevState: ActionState, formData: FormData
     };
   }
 
-  redirect('/');
+  redirect(redirectUrl || '/');
 }
 
 export async function loginWithEmail(prevState: ActionState, formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
+  const redirectUrl = formData.get('redirectUrl') as string | null;
 
   try {
     await signInWithEmailAndPassword(auth, email, password);
@@ -48,7 +50,7 @@ export async function loginWithEmail(prevState: ActionState, formData: FormData)
     };
   }
   
-  redirect('/');
+  redirect(redirectUrl || '/');
 }
 
 export async function logout() {
