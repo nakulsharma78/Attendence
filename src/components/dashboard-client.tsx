@@ -9,6 +9,7 @@ import {
   ShieldAlert,
   ShieldCheck,
   User,
+  Camera,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,6 +26,7 @@ import { generateVerificationPrompt, detectLiveness } from '@/lib/actions';
 import type { Student, AttendanceRecord, AttendanceStatus, VerificationStatus } from '@/types';
 import { getStudents, addAttendanceRecord, getAttendanceRecords } from '@/lib/db';
 import Image from 'next/image';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 type StudentWithStatus = Student & {
   attendanceStatus: AttendanceStatus;
@@ -66,6 +68,8 @@ export function DashboardClient() {
   const [scanProgress, setScanProgress] = React.useState(0);
   const [verificationState, setVerificationState] = React.useState<VerificationState>({ student: null, prompt: '', isVerifying: false });
   const { toast } = useToast();
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const [hasCameraPermission, setHasCameraPermission] = React.useState<boolean | null>(null);
 
   React.useEffect(() => {
     const allStudents = getStudents();
@@ -77,6 +81,37 @@ export function DashboardClient() {
       }))
     );
   }, []);
+
+  React.useEffect(() => {
+    if (verificationState.student) {
+      const getCameraPermission = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          setHasCameraPermission(true);
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        } catch (error) {
+          console.error('Error accessing camera:', error);
+          setHasCameraPermission(false);
+          toast({
+            variant: 'destructive',
+            title: 'Camera Access Denied',
+            description: 'Please enable camera permissions in your browser settings to use this app.',
+          });
+        }
+      };
+      getCameraPermission();
+    } else {
+      // Turn off camera when dialog closes
+      if (videoRef.current && videoRef.current.srcObject) {
+        (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
+        videoRef.current.srcObject = null;
+      }
+      setHasCameraPermission(null);
+    }
+  }, [verificationState.student, toast]);
+
 
   const resetState = () => {
     setIsScanning(false);
@@ -96,33 +131,40 @@ export function DashboardClient() {
     const totalStudents = students.length;
 
     for (let i = 0; i < totalStudents; i++) {
-      const student = students[i];
+      const currentStudent = students[i];
       
       // Mark as scanning
-      setStudents(prev => prev.map(s => s.id === student.id ? { ...s, attendanceStatus: 'Scanning' } : s));
+      setStudents(prev => prev.map(s => s.id === currentStudent.id ? { ...s, attendanceStatus: 'Scanning' } : s));
       await new Promise(res => setTimeout(res, 1000));
 
       // Mark as present
-      setStudents(prev => prev.map(s => s.id === student.id ? { ...s, attendanceStatus: 'Present' } : s));
+      setStudents(prev => prev.map(s => s.id === currentStudent.id ? { ...s, attendanceStatus: 'Present' } : s));
       
       const shouldVerify = Math.random() > 0.6; // 40% chance to verify
       if (shouldVerify) {
-        setStudents(prev => prev.map(s => s.id === student.id ? { ...s, verificationStatus: 'Pending' } : s));
+        setStudents(prev => prev.map(s => s.id === currentStudent.id ? { ...s, verificationStatus: 'Pending' } : s));
         const { prompt } = await generateVerificationPrompt();
-        setVerificationState({ student: students[i], prompt, isVerifying: false });
-        // Wait for verification dialog to close
+        
+        // This is a bit tricky, we need to update state and then wait.
+        // A dedicated state management would be better, but for this component, we can do this.
         await new Promise<void>(resolve => {
+          setVerificationState({ student: {...currentStudent, attendanceStatus: 'Present', verificationStatus: 'Pending'}, prompt, isVerifying: false });
+
           const interval = setInterval(() => {
-            if (verificationState.student === null) {
-              clearInterval(interval);
-              resolve();
-            }
+            setVerificationState(current => {
+              if (current.student === null) {
+                clearInterval(interval);
+                resolve();
+              }
+              return current;
+            })
           }, 100);
         });
+
       } else {
         const record: Omit<AttendanceRecord, 'id'> = {
-          studentId: student.id,
-          studentName: student.name,
+          studentId: currentStudent.id,
+          studentName: currentStudent.name,
           date: new Date().toISOString().split('T')[0],
           status: 'Present',
           verification: 'Not Required'
@@ -139,34 +181,45 @@ export function DashboardClient() {
   };
   
   const handleVerification = async () => {
-    if (!verificationState.student) return;
+    if (!verificationState.student || !videoRef.current) return;
     setVerificationState(prev => ({ ...prev, isVerifying: true }));
     
-    // The photoDataUri would come from a live camera feed in a real app.
-    // Here we use a placeholder.
-    const photoDataUri = 'data:image/jpeg;base64,'; // Simplified for simulation
-    
-    const result = await detectLiveness({ photoDataUri });
-    
-    const isLive = result.isLive;
-    const finalVerificationStatus: VerificationStatus = isLive ? 'Verified' : 'Failed';
-    
-    setStudents(prev => prev.map(s => s.id === verificationState.student!.id ? { ...s, verificationStatus: finalVerificationStatus } : s));
-    
-    const record: Omit<AttendanceRecord, 'id'> = {
-      studentId: verificationState.student.id,
-      studentName: verificationState.student.name,
-      date: new Date().toISOString().split('T')[0],
-      status: 'Present',
-      verification: finalVerificationStatus
-    };
-    addAttendanceRecord(record);
-    
-    toast({
-      title: isLive ? "Verification Successful" : "Verification Failed",
-      description: isLive ? `${verificationState.student.name} has been verified.` : `Liveness check failed for ${verificationState.student.name}.`,
-      variant: isLive ? 'default' : 'destructive'
-    });
+    const canvas = document.createElement('canvas');
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    const context = canvas.getContext('2d');
+    if (context) {
+      context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+      const photoDataUri = canvas.toDataURL('image/jpeg');
+
+      const result = await detectLiveness({ photoDataUri });
+      
+      const isLive = result.isLive;
+      const finalVerificationStatus: VerificationStatus = isLive ? 'Verified' : 'Failed';
+      
+      setStudents(prev => prev.map(s => s.id === verificationState.student!.id ? { ...s, verificationStatus: finalVerificationStatus } : s));
+      
+      const record: Omit<AttendanceRecord, 'id'> = {
+        studentId: verificationState.student.id,
+        studentName: verificationState.student.name,
+        date: new Date().toISOString().split('T')[0],
+        status: 'Present',
+        verification: finalVerificationStatus
+      };
+      addAttendanceRecord(record);
+      
+      toast({
+        title: isLive ? "Verification Successful" : "Verification Failed",
+        description: isLive ? `${verificationState.student.name} has been verified.` : `Liveness check failed for ${verificationState.student.name}.`,
+        variant: isLive ? 'default' : 'destructive'
+      });
+    } else {
+       toast({
+        title: "Verification Error",
+        description: "Could not capture image from video.",
+        variant: 'destructive'
+      });
+    }
     
     setVerificationState({ student: null, prompt: '', isVerifying: false });
   };
@@ -214,7 +267,7 @@ export function DashboardClient() {
         </div>
       </div>
       
-      <Dialog open={!!verificationState.student && !verificationState.isVerifying} onOpenChange={() => verificationState.isVerifying ? null : setVerificationState({ student: null, prompt: '', isVerifying: false })}>
+      <Dialog open={!!verificationState.student} onOpenChange={(isOpen) => !isOpen && setVerificationState({ student: null, prompt: '', isVerifying: false })}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Liveness Verification for {verificationState.student?.name}</DialogTitle>
@@ -222,10 +275,25 @@ export function DashboardClient() {
               Please ask the student to perform the following action to verify their presence.
             </DialogDescription>
           </DialogHeader>
-          <div className="my-6 p-4 bg-secondary rounded-lg text-center">
+          <div className="my-6 text-center">
+            <div className="relative aspect-video w-full rounded-lg overflow-hidden border-2 border-dashed border-primary/50 flex items-center justify-center bg-muted mb-4">
+              <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
+              {hasCameraPermission === false && (
+                <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center text-white p-4">
+                  <Camera className="h-12 w-12 text-destructive mb-2" />
+                  <p className="font-semibold">Camera Access Denied</p>
+                  <p className="text-sm text-center">Please enable camera permissions to continue.</p>
+                </div>
+              )}
+               {hasCameraPermission === null && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Loader className="h-8 w-8 animate-spin text-muted-foreground" />
+                </div>
+              )}
+            </div>
             <p className="text-2xl font-bold text-primary">{verificationState.prompt}</p>
           </div>
-          <Button onClick={handleVerification} disabled={verificationState.isVerifying} className="w-full">
+          <Button onClick={handleVerification} disabled={verificationState.isVerifying || hasCameraPermission !== true} className="w-full">
             {verificationState.isVerifying ? <Loader className="animate-spin mr-2" /> : <ShieldCheck className="mr-2" />}
             Confirm Liveness
           </Button>
