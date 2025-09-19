@@ -78,7 +78,7 @@ export default function SubscribePage() {
             </p>
           </CardContent>
         </Card>
-        <div className="mt-6 flex justify-between items-center">
+        <div className="mt-6 flex justify-end items-center gap-4">
             <Button variant="outline" onClick={() => router.push('/#pricing')}>
                 <ArrowLeft className="mr-2 h-4 w-4"/>
                 Back to Pricing
