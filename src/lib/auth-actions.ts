@@ -8,7 +8,12 @@ import {
 import { auth } from '@/lib/firebase';
 import { redirect } from 'next/navigation';
 
-export async function signupWithEmail(formData: FormData) {
+type ActionState = {
+  success: boolean;
+  message: string;
+} | undefined;
+
+export async function signupWithEmail(prevState: ActionState, formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
@@ -30,7 +35,7 @@ export async function signupWithEmail(formData: FormData) {
   redirect('/');
 }
 
-export async function loginWithEmail(formData: FormData) {
+export async function loginWithEmail(prevState: ActionState, formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
