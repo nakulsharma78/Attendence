@@ -76,7 +76,7 @@ export function Pricing() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
           {pricingTiers.map((tier) => (
-            <Card key={tier.name} className={tier.name === 'Enterprise' ? 'md:col-span-2 lg:col-span-1' : ''}>
+            <Card key={tier.name} className="flex flex-col">
               <CardHeader>
                 <CardTitle>{tier.name}</CardTitle>
                 <div className="flex items-baseline">
@@ -85,7 +85,7 @@ export function Pricing() {
                 </div>
                 <CardDescription>{tier.description}</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex-grow">
                 <ul className="space-y-4">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-center gap-2">
@@ -101,6 +101,7 @@ export function Pricing() {
                 ) : (
                   <Button asChild className="w-full">
                     <Link href={`/subscribe/${tier.planId}`}>{tier.cta}</Link>
+
                   </Button>
                 )}
               </CardFooter>
