@@ -11,10 +11,6 @@ const firebaseConfig = {
   "messagingSenderId": "603483843033"
 };
 
-if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-  firebaseConfig.authDomain = 'localhost';
-}
-
 // Initialize Firebase
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
