@@ -1,21 +1,19 @@
-import { PageHeader } from '@/components/page-header';
-import { DashboardClient } from '@/components/dashboard-client';
-import { Card, CardContent } from '@/components/ui/card';
+import { Hero } from '@/components/landing/hero';
+import { Features } from '@/components/landing/features';
+import { Pricing } from '@/components/landing/pricing';
+import { LandingHeader } from '@/components/landing/landing-header';
+import { LandingFooter } from '@/components/landing/landing-footer';
 
-export default function DashboardPage() {
+export default function LandingPage() {
   return (
-    <div className="flex flex-col h-full">
-      <PageHeader
-        title="Dashboard"
-        description="Real-time attendance monitoring and verification."
-      />
-      <div className="flex-grow p-6 pt-0">
-        <Card className="h-full">
-          <CardContent className="p-2 h-full">
-            <DashboardClient />
-          </CardContent>
-        </Card>
-      </div>
+    <div className="flex flex-col min-h-screen">
+      <LandingHeader />
+      <main className="flex-grow">
+        <Hero />
+        <Features />
+        <Pricing />
+      </main>
+      <LandingFooter />
     </div>
   );
 }

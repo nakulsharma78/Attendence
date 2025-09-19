@@ -50,24 +50,27 @@ export function SignupForm() {
   }, [state, toast]);
   
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const password = formData.get('password') as string;
     const confirmPassword = formData.get('confirmPassword') as string;
     
     if (password !== confirmPassword) {
-      event.preventDefault(); // Prevent form submission
       toast({
         title: "Passwords don't match",
         variant: 'destructive',
       });
+      return;
     }
+    
+    formAction(formData);
   };
   
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      router.push('/');
+      router.push('/dashboard');
     } catch (error) {
       console.error('Error signing in with Google:', error);
       toast({
@@ -83,7 +86,9 @@ export function SignupForm() {
     <Card className="w-full max-w-sm">
       <CardHeader className="text-center">
         <div className="mb-4 flex justify-center">
-          <ShieldCheck className="h-12 w-12 text-primary" />
+           <Link href="/">
+            <ShieldCheck className="h-12 w-12 text-primary" />
+          </Link>
         </div>
         <CardTitle>Create an Account</CardTitle>
         <CardDescription>Enter your details to get started</CardDescription>

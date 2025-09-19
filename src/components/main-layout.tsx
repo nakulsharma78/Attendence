@@ -3,8 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { BarChart3, LayoutDashboard, ShieldCheck, UserPlus, Settings, LogOut, LogIn } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { BarChart3, LayoutDashboard, ShieldCheck, UserPlus, Settings, LogOut } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -19,14 +18,15 @@ import {
 import { Button } from '@/components/ui/button';
 import { useSession } from '@/components/session-provider';
 import { logout } from '@/lib/auth-actions';
+import { LandingHeader } from '@/components/landing/landing-header';
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, loading } = useSession();
   
-  const noSidebarRoutes = ['/login', '/signup'];
-  const isPublicPage = noSidebarRoutes.includes(pathname);
+  const publicPages = ['/', '/login', '/signup'];
+  const isPublicPage = publicPages.includes(pathname);
 
   React.useEffect(() => {
     if (!loading && !user && !isPublicPage) {
@@ -34,17 +34,17 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
     }
   }, [user, loading, isPublicPage, router, pathname]);
 
-  if (loading && !isPublicPage) {
+  if (loading) {
     return <div className="flex h-screen w-full items-center justify-center">Loading...</div>;
   }
-
+  
   if (isPublicPage) {
-    return <>{children}</>;
+     return <>{children}</>;
   }
 
   const menuItems = [
     {
-      href: '/',
+      href: '/dashboard',
       label: 'Dashboard',
       icon: LayoutDashboard,
     },
@@ -69,9 +69,11 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <Sidebar variant="inset" collapsible="icon">
         <SidebarHeader>
-          <Button variant="ghost" className="h-10 w-full justify-start px-2">
-            <ShieldCheck className="h-6 w-6 text-primary" />
-            <span className="ml-2 font-bold text-lg">GuardianAI</span>
+          <Button asChild variant="ghost" className="h-10 w-full justify-start px-2">
+            <Link href="/dashboard">
+              <ShieldCheck className="h-6 w-6 text-primary" />
+              <span className="ml-2 font-bold text-lg">GuardianAI</span>
+            </Link>
           </Button>
         </SidebarHeader>
         <SidebarContent>

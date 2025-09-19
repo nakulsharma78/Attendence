@@ -51,7 +51,7 @@ export function LoginForm() {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      router.push('/');
+      router.push('/dashboard');
     } catch (error) {
       console.error('Error signing in with Google:', error);
       toast({
@@ -66,7 +66,9 @@ export function LoginForm() {
     <Card className="w-full max-w-sm">
       <CardHeader className="text-center">
         <div className="mb-4 flex justify-center">
-          <ShieldCheck className="h-12 w-12 text-primary" />
+          <Link href="/">
+            <ShieldCheck className="h-12 w-12 text-primary" />
+          </Link>
         </div>
         <CardTitle>Welcome Back</CardTitle>
         <CardDescription>Enter your credentials to access your account</CardDescription>

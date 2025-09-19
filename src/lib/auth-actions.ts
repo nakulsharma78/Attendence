@@ -4,8 +4,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  GoogleAuthProvider,
-  signInWithPopup,
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { redirect } from 'next/navigation';
@@ -34,7 +32,7 @@ export async function signupWithEmail(prevState: ActionState, formData: FormData
     };
   }
 
-  redirect('/');
+  redirect('/dashboard');
 }
 
 export async function loginWithEmail(prevState: ActionState, formData: FormData) {
@@ -50,7 +48,7 @@ export async function loginWithEmail(prevState: ActionState, formData: FormData)
     };
   }
   
-  redirect('/');
+  redirect('/dashboard');
 }
 
 export async function logout() {
